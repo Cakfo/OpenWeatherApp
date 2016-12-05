@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:gravity="center_vertical"
+    android:background="@color/colorPrimary"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_vertical">
+
+        <TextView
+                tools:text="WEDNESDAY"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_day"
+                android:textSize="20sp"
+                android:layout_marginStart="30dp"
+                android:layout_width="120dp"
+                android:textColor="@android:color/background_light"
+                android:textAllCaps="true"
+                android:layout_weight="1" />
+
+        <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                tools:srcCompat="@drawable/cloudy"
+                android:id="@+id/iv_day"
+                android:layout_marginLeft="30dp"
+                android:layout_weight="1" />
+
+        <TextView
+                tools:text="55"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_tempday"
+                android:textSize="20sp"
+                android:layout_marginLeft="30dp"
+                android:textColor="@android:color/background_light"
+                android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorDivider"
+        android:id="@+id/divider">
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/llExpandArea"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:text="Item One" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:text="Item Two" />
+
+        </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorDivider"
+        android:id="@+id/bottom_divider">
+    </LinearLayout>
+</LinearLayout>
