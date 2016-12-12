@@ -1,10 +1,12 @@
 package com.spaja.openweatherapp.Activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     double lat, lon;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
+    LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (autoCompleteTextView.getText().toString().equals("")) {
+                if (autoCompleteTextView.getText().toString().trim().length() == 0) {
                     Toast.makeText(MainActivity.this, "Place can't be empty", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent i = new Intent(MainActivity.this, WeatherData.class);
@@ -99,10 +102,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, WeatherData.class);
-                i.putExtra("lat", lat);
-                i.putExtra("lon", lon);
-                startActivity(i);
+                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    Intent i = new Intent(MainActivity.this, WeatherData.class);
+                    i.putExtra("lat", lat);
+                    i.putExtra("lon", lon);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(MainActivity.this, "Please enable your GPS", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -146,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(MainActivity.this, "Can't connect too Google services", Toast.LENGTH_SHORT).show();
     }
 
     public void getPredictions(String input) {
@@ -204,7 +211,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 @Override
                 public void onClick(View v) {
                     autoCompleteTextView.setText(mDataset.get(position));
-                    citiesRecycler.setVisibility(View.GONE);}
+                    //citiesRecycler.setVisibility(View.GONE);
+                }
             });
         }
 
@@ -221,5 +229,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         autoCompleteTextView = (EditText) findViewById(R.id.et_city_name);
         autoCompleteTextView.setTypeface(tf);
         location = (Button) findViewById(R.id.b_location);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     }
 }
