@@ -18,7 +18,8 @@
         android:gravity="center_vertical"
         android:weightSum="12"
         android:background="@android:color/white"
-        android:layout_height="wrap_content">
+        android:layout_marginTop="150dp"
+        android:layout_height="40dp">
 
         <Button
             android:layout_width="30dp"
@@ -28,7 +29,7 @@
             android:background= "@mipmap/close" />
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:id="@+id/et_city_name"
             android:layout_weight="10"
@@ -45,15 +46,28 @@
             android:layout_height="30dp" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <TextView
+        android:text="Or..."
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cities_rv" />
+        android:id="@+id/textView"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/colorText" />
 
     <Button
         android:text="Use my location"
         android:layout_width="match_parent"
+        android:id="@+id/b_location"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@color/colorText"
+        android:alpha="0.7"
+        android:layout_height="40dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/b_location" />
+        android:id="@+id/cities_rv" />
 
 </LinearLayout>
