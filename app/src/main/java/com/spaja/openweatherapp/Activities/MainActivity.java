@@ -2,7 +2,9 @@ package com.spaja.openweatherapp.Activities;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -11,6 +13,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,8 +24,11 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +39,9 @@ import com.spaja.openweatherapp.APIService.OpenWeatherAPI;
 import com.spaja.openweatherapp.Model.GoogleAPIResponse;
 import com.spaja.openweatherapp.Model.Main;
 import com.spaja.openweatherapp.R;
+
 import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,12 +53,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     static final String TYPES = "(cities)";
     public ArrayList<String> resultList;
     EditText autoCompleteTextView;
-    private Button search, delete, location;
+    private Button search, delete, location, clear_prefs;
     RecyclerView citiesRecycler;
     double lat, lon;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationManager locationManager;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+    AlertDialog alertDialog;
+    String cityName;
+    private DrawerLayout DrawerLayout;
+    private ListView DrawerList;
+    String[] citiesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +73,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
         initializeVariables();
 
+        cityName = preferences.getString("Cityname", null);
+        if (cityName == null) {
+            citiesList = new String[]{"Your list is empty!"};
+        } else {
+            citiesList = cityName.split(",");
+        }
+
+        LayoutInflater inflater = getLayoutInflater();
+        ViewGroup header = (ViewGroup) inflater.inflate(R.layout.list_view_header, DrawerList, false);
+        DrawerList.addHeaderView(header, null, false);
+        DrawerList.setAdapter(new ArrayAdapter<>(this,
+                R.layout.list_view_item, citiesList));
+        DrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -84,12 +118,44 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (autoCompleteTextView.getText().toString().trim().length() == 0) {
-                    Toast.makeText(MainActivity.this, "Place can't be empty", Toast.LENGTH_SHORT).show();
+                if (autoCompleteTextView.getText().toString().trim().length() != 0) {
+                    alertDialog = new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Save city name")
+                            .setMessage("Do you want to save this city?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    editor = preferences.edit();
+                                    if (cityName == null) {
+                                        cityName = autoCompleteTextView.getText().toString().split(",")[0];
+                                        editor.putString("Cityname", cityName);
+                                        editor.apply();
+                                    } else {
+                                        cityName = cityName + "," + autoCompleteTextView.getText().toString().split(",")[0];
+                                        editor.putString("Cityname", cityName);
+                                        editor.apply();
+                                    }
+
+                                    Intent i = new Intent(MainActivity.this, WeatherData.class);
+                                    i.putExtra("cityname", autoCompleteTextView.getText().toString());
+                                    startActivity(i);
+
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    Intent i = new Intent(MainActivity.this, WeatherData.class);
+                                    i.putExtra("cityname", autoCompleteTextView.getText().toString());
+                                    startActivity(i);
+
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
                 } else {
-                    Intent i = new Intent(MainActivity.this, WeatherData.class);
-                    i.putExtra("cityname", autoCompleteTextView.getText().toString());
-                    startActivity(i);
+                    Toast.makeText(MainActivity.this, "Place can't be empty", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -110,6 +176,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 } else {
                     Toast.makeText(MainActivity.this, "Please enable your GPS", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+        clear_prefs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor = preferences.edit();
+                editor.clear();
+                editor.apply();
             }
         });
     }
@@ -230,5 +304,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         autoCompleteTextView.setTypeface(tf);
         location = (Button) findViewById(R.id.b_location);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        preferences = getSharedPreferences("USER_PREF", Context.MODE_PRIVATE);
+        DrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerList = (ListView) findViewById(R.id.left_drawer);
+        clear_prefs = (Button) findViewById(R.id.clear_prefs);
+        cityName = "Default Value";
     }
 }
