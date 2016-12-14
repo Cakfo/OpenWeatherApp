@@ -19,8 +19,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,16 +37,21 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.spaja.openweatherapp.APIService.OpenWeatherAPI;
 import com.spaja.openweatherapp.Model.GoogleAPIResponse;
-import com.spaja.openweatherapp.Model.Main;
 import com.spaja.openweatherapp.R;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, Serializable {
 
     private Typeface tf;
     static final String API_KEY = "AIzaSyCNjTFU1Yh_SPK41QmR7CfKVv538eEG7fo";
@@ -65,7 +70,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     String cityName;
     private DrawerLayout DrawerLayout;
     private ListView DrawerList;
-    String[] citiesList;
+    ArrayAdapter myAdapter;
+    ArrayList<String> newCitiesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,22 +79,36 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
         initializeVariables();
 
-        cityName = preferences.getString("Cityname", null);
-        if (cityName == null) {
-            citiesList = new String[]{"Your list is empty!"};
-        } else {
-            citiesList = cityName.split(",");
+        try {
+            FileInputStream fis = openFileInput("USER_DATA");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            newCitiesList = (ArrayList<String>) ois.readObject();
+            ois.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+
+        if (newCitiesList.size() == 0) {
+            newCitiesList.add("Your List is Empty");
+        }
+
+        myAdapter = new ArrayAdapter<>(this,
+                R.layout.list_view_item, newCitiesList);
 
         LayoutInflater inflater = getLayoutInflater();
         ViewGroup header = (ViewGroup) inflater.inflate(R.layout.list_view_header, DrawerList, false);
         DrawerList.addHeaderView(header, null, false);
-        DrawerList.setAdapter(new ArrayAdapter<>(this,
-                R.layout.list_view_item, citiesList));
+        DrawerList.setAdapter(myAdapter);
         DrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                Intent i = new Intent(MainActivity.this, WeatherData.class);
+                i.putExtra("cityname", newCitiesList.get((int) id));
+                startActivity(i);
+                DrawerLayout.closeDrawer(Gravity.LEFT);
             }
         });
         if (mGoogleApiClient == null) {
@@ -114,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             }
         });
-
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,21 +144,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    editor = preferences.edit();
-                                    if (cityName == null) {
-                                        cityName = autoCompleteTextView.getText().toString().split(",")[0];
-                                        editor.putString("Cityname", cityName);
-                                        editor.apply();
-                                    } else {
-                                        cityName = cityName + "," + autoCompleteTextView.getText().toString().split(",")[0];
-                                        editor.putString("Cityname", cityName);
-                                        editor.apply();
+                                    if (newCitiesList.equals("Your List is Empty"))
+                                        newCitiesList.add(autoCompleteTextView.getText().toString().split(",")[0]);
+                                    try {
+                                        FileOutputStream fos = openFileOutput("USER_DATA", Context.MODE_PRIVATE);
+                                        ObjectOutputStream oos = new ObjectOutputStream(fos);
+                                        oos.writeObject(newCitiesList);
+                                        oos.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
                                     }
 
                                     Intent i = new Intent(MainActivity.this, WeatherData.class);
                                     i.putExtra("cityname", autoCompleteTextView.getText().toString());
                                     startActivity(i);
-
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -149,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                     Intent i = new Intent(MainActivity.this, WeatherData.class);
                                     i.putExtra("cityname", autoCompleteTextView.getText().toString());
                                     startActivity(i);
-
                                 }
                             })
                             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -181,9 +198,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         clear_prefs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editor = preferences.edit();
-                editor.clear();
-                editor.apply();
             }
         });
     }
@@ -309,5 +323,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         DrawerList = (ListView) findViewById(R.id.left_drawer);
         clear_prefs = (Button) findViewById(R.id.clear_prefs);
         cityName = "Default Value";
+        newCitiesList = new ArrayList<>();
     }
 }
