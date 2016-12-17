@@ -20,25 +20,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.spaja.openweatherapp.APIService.OpenWeatherAPI;
+import com.spaja.openweatherapp.Adapters.DrawerRecyclerViewAdapter;
 import com.spaja.openweatherapp.Model.GoogleAPIResponse;
 import com.spaja.openweatherapp.R;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,7 +41,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -68,10 +62,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     SharedPreferences.Editor editor;
     AlertDialog alertDialog;
     String cityName;
-    private DrawerLayout DrawerLayout;
-    private ListView DrawerList;
-    ArrayAdapter myAdapter;
+    public DrawerLayout DrawerLayout;
     ArrayList<String> newCitiesList;
+    private RecyclerView drawerRecyclerView;
+    private RecyclerView.Adapter drawerRecyclerAdapter;
+    private RecyclerView.LayoutManager drawerRecyclerLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,22 +90,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             newCitiesList.add("Your List is Empty");
         }
 
-        myAdapter = new ArrayAdapter<>(this,
-                R.layout.list_view_item, newCitiesList);
-
-        LayoutInflater inflater = getLayoutInflater();
-        ViewGroup header = (ViewGroup) inflater.inflate(R.layout.list_view_header, DrawerList, false);
-        DrawerList.addHeaderView(header, null, false);
-        DrawerList.setAdapter(myAdapter);
-        DrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(MainActivity.this, WeatherData.class);
-                i.putExtra("cityname", newCitiesList.get((int) id));
-                startActivity(i);
-                DrawerLayout.closeDrawer(Gravity.LEFT);
-            }
-        });
+        drawerRecyclerAdapter = new DrawerRecyclerViewAdapter(newCitiesList, DrawerLayout);
+        drawerRecyclerView.setAdapter(drawerRecyclerAdapter);
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -144,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if (newCitiesList.equals("Your List is Empty"))
                                         newCitiesList.add(autoCompleteTextView.getText().toString().split(",")[0]);
                                     try {
                                         FileOutputStream fos = openFileOutput("USER_DATA", Context.MODE_PRIVATE);
@@ -318,11 +298,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         autoCompleteTextView.setTypeface(tf);
         location = (Button) findViewById(R.id.b_location);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        preferences = getSharedPreferences("USER_PREF", Context.MODE_PRIVATE);
-        DrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        DrawerList = (ListView) findViewById(R.id.left_drawer);
         clear_prefs = (Button) findViewById(R.id.clear_prefs);
         cityName = "Default Value";
         newCitiesList = new ArrayList<>();
+        drawerRecyclerView = (RecyclerView) findViewById(R.id.left_drawer);
+        drawerRecyclerLayoutManager = new LinearLayoutManager(this);
+        drawerRecyclerView.setLayoutManager(drawerRecyclerLayoutManager);
+        DrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     }
 }

@@ -88,13 +88,10 @@
 
     </LinearLayout>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/left_drawer"
         android:layout_width="320dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="@color/colorDivider"
-        android:dividerHeight="1dp"
-        android:background="@color/colorPrimaryDark" />
+        android:background="@color/colorPrimary" />
 </android.support.v4.widget.DrawerLayout>
