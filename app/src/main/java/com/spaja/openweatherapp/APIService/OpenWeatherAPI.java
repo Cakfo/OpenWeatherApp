@@ -21,8 +21,9 @@ public interface OpenWeatherAPI {
     @GET("weather")
     Call<ResponseData> getWeatherData(@Query("q") String q, @Query("APPID") String appid, @Query("units") String units);
 
+    String BASE_URL = "http://api.openweathermap.org/data/2.5/";
     Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://api.openweathermap.org/data/2.5/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -30,7 +31,7 @@ public interface OpenWeatherAPI {
     Call<ResponseData> getWeatherDataLocation(@Query("lat") double lat, @Query("lon") double lon, @Query("APPID") String appid, @Query("units") String units);
 
     Retrofit retrofit_geo = new Retrofit.Builder()
-            .baseUrl("http://api.openweathermap.org/data/2.5/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -38,7 +39,7 @@ public interface OpenWeatherAPI {
     Call<ForecastResponse> getForecast(@Query("q") String q, @Query("APPID") String appid, @Query("units") String units);
 
     Retrofit retrofit_forecast = new Retrofit.Builder()
-            .baseUrl("http://api.openweathermap.org/data/2.5/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -46,7 +47,7 @@ public interface OpenWeatherAPI {
     Call<ForecastResponse> getForecastLocation(@Query("lat") double q, @Query("lon") double lon, @Query("APPID") String appid, @Query("units") String units);
 
     Retrofit retrofit_forecast_geo = new Retrofit.Builder()
-            .baseUrl("http://api.openweathermap.org/data/2.5/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 

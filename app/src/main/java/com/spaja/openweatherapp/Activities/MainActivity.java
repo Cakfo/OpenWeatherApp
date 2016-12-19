@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -27,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -47,7 +47,6 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, Serializable {
 
-    private Typeface tf;
     static final String API_KEY = "AIzaSyCNjTFU1Yh_SPK41QmR7CfKVv538eEG7fo";
     static final String TYPES = "(cities)";
     public ArrayList<String> resultList;
@@ -58,15 +57,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationManager locationManager;
-    SharedPreferences preferences;
-    SharedPreferences.Editor editor;
     AlertDialog alertDialog;
     String cityName;
     public DrawerLayout DrawerLayout;
     ArrayList<String> newCitiesList;
     private RecyclerView drawerRecyclerView;
-    private RecyclerView.Adapter drawerRecyclerAdapter;
-    private RecyclerView.LayoutManager drawerRecyclerLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +74,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             ObjectInputStream ois = new ObjectInputStream(fis);
             newCitiesList = (ArrayList<String>) ois.readObject();
             ois.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -90,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             newCitiesList.add("Your List is Empty");
         }
 
-        drawerRecyclerAdapter = new DrawerRecyclerViewAdapter(newCitiesList, DrawerLayout);
+        RecyclerView.Adapter drawerRecyclerAdapter = new DrawerRecyclerViewAdapter(newCitiesList, DrawerLayout);
         drawerRecyclerView.setAdapter(drawerRecyclerAdapter);
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -125,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                        newCitiesList.add(autoCompleteTextView.getText().toString().split(",")[0]);
+                                    newCitiesList.add(autoCompleteTextView.getText().toString().split(",")[0]);
                                     try {
                                         FileOutputStream fos = openFileOutput("USER_DATA", Context.MODE_PRIVATE);
                                         ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -291,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void initializeVariables() {
-        tf = Typeface.createFromAsset(getAssets(), "robotoslablight.ttf");
+        Typeface tf = Typeface.createFromAsset(getAssets(), "robotoslablight.ttf");
         search = (Button) findViewById(R.id.b_search);
         delete = (Button) findViewById(R.id.b_delete);
         autoCompleteTextView = (EditText) findViewById(R.id.et_city_name);
@@ -302,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         cityName = "Default Value";
         newCitiesList = new ArrayList<>();
         drawerRecyclerView = (RecyclerView) findViewById(R.id.left_drawer);
-        drawerRecyclerLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager drawerRecyclerLayoutManager = new LinearLayoutManager(this);
         drawerRecyclerView.setLayoutManager(drawerRecyclerLayoutManager);
         DrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
     }
