@@ -1,6 +1,4 @@
-package com.spaja.openweatherapp.Model;
-
-import java.util.ArrayList;
+package com.spaja.openweatherapp.model;
 
 /**
  * Created by Spaja on 22-Nov-16.

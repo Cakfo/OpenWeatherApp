@@ -1,4 +1,4 @@
-package com.spaja.openweatherapp.Model;
+package com.spaja.openweatherapp.model;
 
 /**
  * Created by Spaja on 06-Nov-16.

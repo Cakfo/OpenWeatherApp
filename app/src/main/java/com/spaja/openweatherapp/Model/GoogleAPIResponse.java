@@ -1,4 +1,4 @@
-package com.spaja.openweatherapp.Model;
+package com.spaja.openweatherapp.model;
 
 import java.util.ArrayList;
 

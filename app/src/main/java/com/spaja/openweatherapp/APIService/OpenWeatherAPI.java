@@ -1,16 +1,14 @@
-package com.spaja.openweatherapp.APIService;
+package com.spaja.openweatherapp.apiService;
 
-import com.spaja.openweatherapp.Model.ForecastResponse;
-import com.spaja.openweatherapp.Model.GoogleAPIResponse;
-import com.spaja.openweatherapp.Model.ResponseData;
+import com.spaja.openweatherapp.model.ForecastResponse;
+import com.spaja.openweatherapp.model.GoogleAPIResponse;
+import com.spaja.openweatherapp.model.ResponseData;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
-import retrofit2.http.Streaming;
 
 /**
  * Created by Spaja on 03-Nov-16.

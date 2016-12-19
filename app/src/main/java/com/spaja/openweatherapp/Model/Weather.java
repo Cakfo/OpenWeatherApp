@@ -1,6 +1,4 @@
-package com.spaja.openweatherapp.Model;
-
-import java.io.Serializable;
+package com.spaja.openweatherapp.model;
 
 /**
  * Created by Spaja on 03-Nov-16.

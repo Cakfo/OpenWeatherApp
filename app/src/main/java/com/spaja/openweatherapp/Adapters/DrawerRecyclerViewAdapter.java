@@ -1,4 +1,4 @@
-package com.spaja.openweatherapp.Adapters;
+package com.spaja.openweatherapp.adapters;
 
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.spaja.openweatherapp.Activities.WeatherData;
+import com.spaja.openweatherapp.activities.WeatherData;
 import com.spaja.openweatherapp.R;
 
 import java.util.ArrayList;

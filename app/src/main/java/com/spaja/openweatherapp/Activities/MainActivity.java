@@ -1,4 +1,4 @@
-package com.spaja.openweatherapp.Activities;
+package com.spaja.openweatherapp.activities;
 
 import android.Manifest;
 import android.content.Context;
@@ -30,9 +30,9 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.spaja.openweatherapp.APIService.OpenWeatherAPI;
-import com.spaja.openweatherapp.Adapters.DrawerRecyclerViewAdapter;
-import com.spaja.openweatherapp.Model.GoogleAPIResponse;
+import com.spaja.openweatherapp.apiService.OpenWeatherAPI;
+import com.spaja.openweatherapp.adapters.DrawerRecyclerViewAdapter;
+import com.spaja.openweatherapp.model.GoogleAPIResponse;
 import com.spaja.openweatherapp.R;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

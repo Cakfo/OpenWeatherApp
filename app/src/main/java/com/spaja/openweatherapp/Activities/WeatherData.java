@@ -1,19 +1,10 @@
-package com.spaja.openweatherapp.Activities;
+package com.spaja.openweatherapp.activities;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.graphics.Path;
 import android.graphics.Typeface;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.spaja.openweatherapp.APIService.OpenWeatherAPI;
-import com.spaja.openweatherapp.Model.DataList;
-import com.spaja.openweatherapp.Model.ForecastResponse;
-import com.spaja.openweatherapp.Model.ResponseData;
+import com.spaja.openweatherapp.apiService.OpenWeatherAPI;
+import com.spaja.openweatherapp.model.DataList;
+import com.spaja.openweatherapp.model.ForecastResponse;
+import com.spaja.openweatherapp.model.ResponseData;
 import com.spaja.openweatherapp.R;
 
 import java.text.SimpleDateFormat;
