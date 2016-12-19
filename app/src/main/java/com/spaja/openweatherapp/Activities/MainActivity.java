@@ -19,18 +19,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.spaja.openweatherapp.apiService.OpenWeatherAPI;
+import com.spaja.openweatherapp.adapters.AutoCompleteAdapter;
+import com.spaja.openweatherapp.apiservice.OpenWeatherAPI;
 import com.spaja.openweatherapp.adapters.DrawerRecyclerViewAdapter;
 import com.spaja.openweatherapp.model.GoogleAPIResponse;
 import com.spaja.openweatherapp.R;
@@ -49,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     static final String API_KEY = "AIzaSyCNjTFU1Yh_SPK41QmR7CfKVv538eEG7fo";
     static final String TYPES = "(cities)";
+    public static final String FILE_NAME = "USER_DATA";
     public ArrayList<String> resultList;
     EditText autoCompleteTextView;
     private Button search, delete, location, clear_prefs;
@@ -70,10 +69,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         initializeVariables();
 
         try {
-            FileInputStream fis = openFileInput("USER_DATA");
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            newCitiesList = (ArrayList<String>) ois.readObject();
-            ois.close();
+            readFromFile();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -119,10 +115,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 public void onClick(DialogInterface dialog, int which) {
                                     newCitiesList.add(autoCompleteTextView.getText().toString().split(",")[0]);
                                     try {
-                                        FileOutputStream fos = openFileOutput("USER_DATA", Context.MODE_PRIVATE);
-                                        ObjectOutputStream oos = new ObjectOutputStream(fos);
-                                        oos.writeObject(newCitiesList);
-                                        oos.close();
+                                        writeToFile(newCitiesList);
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -172,6 +165,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onClick(View v) {
             }
         });
+    }
+
+    private ArrayList<String> readFromFile() throws IOException, ClassNotFoundException {
+        FileInputStream fis = openFileInput(FILE_NAME);
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        newCitiesList = (ArrayList<String>) ois.readObject();
+        ois.close();
+        return newCitiesList;
+
+    }
+
+    private void writeToFile(ArrayList<String> cityList) throws IOException {
+        FileOutputStream fos = openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(cityList);
+        oos.close();
     }
 
     @Override
@@ -235,51 +244,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Toast.makeText(MainActivity.this, "ERROR", Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapter.ViewHolder> {
-        private ArrayList<String> mDataset;
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            TextView cityName;
-
-            ViewHolder(View v) {
-                super(v);
-                cityName = (TextView) v.findViewById(R.id.city_name);
-            }
-        }
-
-        AutoCompleteAdapter(ArrayList<String> myDataset) {
-            mDataset = myDataset;
-        }
-
-        @Override
-        public AutoCompleteAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                 int viewType) {
-
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.autocomplete_list_item, parent, false);
-            AutoCompleteAdapter.ViewHolder vh = new AutoCompleteAdapter.ViewHolder(v);
-            return vh;
-        }
-
-        @Override
-        public void onBindViewHolder(final AutoCompleteAdapter.ViewHolder holder, final int position) {
-
-            holder.cityName.setText(mDataset.get(position));
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    autoCompleteTextView.setText(mDataset.get(position));
-                    //citiesRecycler.setVisibility(View.GONE);
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mDataset.size();
-        }
     }
 
     private void initializeVariables() {

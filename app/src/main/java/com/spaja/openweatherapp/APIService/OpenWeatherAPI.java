@@ -1,4 +1,4 @@
-package com.spaja.openweatherapp.apiService;
+package com.spaja.openweatherapp.apiservice;
 
 import com.spaja.openweatherapp.model.ForecastResponse;
 import com.spaja.openweatherapp.model.GoogleAPIResponse;

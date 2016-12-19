@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.spaja.openweatherapp.apiService.OpenWeatherAPI;
+import com.spaja.openweatherapp.apiservice.OpenWeatherAPI;
 import com.spaja.openweatherapp.model.DataList;
 import com.spaja.openweatherapp.model.ForecastResponse;
 import com.spaja.openweatherapp.model.ResponseData;
