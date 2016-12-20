@@ -15,20 +15,20 @@ import java.util.ArrayList;
 
 public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapter.ViewHolder> {
     private ArrayList<String> mDataset;
+    private EditText autoCompleteText;
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView cityName;
-        EditText autoCompleteTextView;
 
         ViewHolder(View v) {
             super(v);
             cityName = (TextView) v.findViewById(R.id.city_name);
-            autoCompleteTextView = (EditText) v.findViewById(R.id.et_city_name);
         }
     }
 
-    public AutoCompleteAdapter(ArrayList<String> myDataset) {
+    public AutoCompleteAdapter(ArrayList<String> myDataset, EditText autoCompleteTextView) {
         mDataset = myDataset;
+        autoCompleteText = autoCompleteTextView;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class AutoCompleteAdapter extends RecyclerView.Adapter<AutoCompleteAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.autoCompleteTextView.setText(mDataset.get(position));
+                autoCompleteText.setText(mDataset.get(position));
             }
         });
     }

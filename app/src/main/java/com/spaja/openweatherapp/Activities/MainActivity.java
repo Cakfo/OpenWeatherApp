@@ -30,6 +30,8 @@ import com.google.android.gms.location.LocationServices;
 import com.spaja.openweatherapp.adapters.AutoCompleteAdapter;
 import com.spaja.openweatherapp.apiservice.OpenWeatherAPI;
 import com.spaja.openweatherapp.adapters.DrawerRecyclerViewAdapter;
+import com.spaja.openweatherapp.onclicklisteners.ClearSavedCitiesListener;
+import com.spaja.openweatherapp.onclicklisteners.UseMyLocationListener;
 import com.spaja.openweatherapp.model.GoogleAPIResponse;
 import com.spaja.openweatherapp.R;
 import java.io.FileInputStream;
@@ -147,24 +149,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 autoCompleteTextView.setText("");
             }
         });
-        location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    Intent i = new Intent(MainActivity.this, WeatherData.class);
-                    i.putExtra("lat", lat);
-                    i.putExtra("lon", lon);
-                    startActivity(i);
-                } else {
-                    Toast.makeText(MainActivity.this, "Please enable your GPS", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        clear_prefs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
+        location.setOnClickListener(new UseMyLocationListener(MainActivity.this, locationManager, lat, lon));
+        clear_prefs.setOnClickListener(new ClearSavedCitiesListener());
     }
 
     private ArrayList<String> readFromFile() throws IOException, ClassNotFoundException {
@@ -233,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 for (int i = 0; i < response.body().getPredicitons().size(); i++) {
                     resultList.add(response.body().getPredicitons().get(i).getDescription());
                 }
-                AutoCompleteAdapter adapter = new AutoCompleteAdapter(resultList);
+                AutoCompleteAdapter adapter = new AutoCompleteAdapter(resultList, autoCompleteTextView);
                 citiesRecycler = (RecyclerView) findViewById(R.id.cities_rv);
                 citiesRecycler.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                 citiesRecycler.setAdapter(adapter);

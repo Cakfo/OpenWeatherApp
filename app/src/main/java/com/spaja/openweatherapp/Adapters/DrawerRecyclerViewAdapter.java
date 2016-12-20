@@ -13,50 +13,132 @@ import com.spaja.openweatherapp.R;
 import java.util.ArrayList;
 
 
-public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter<DrawerRecyclerViewAdapter.ViewHolder> {
-
+public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<String> mDataset;
     private DrawerLayout mDrawerLayout;
+    private static final int TYPE_ITEM = 0;
+    private static final int TYPE_HEADER = 1;
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public DrawerRecyclerViewAdapter(ArrayList<String> mDataset, DrawerLayout mDrawerLayout) {
+        this.mDataset = mDataset;
+        this.mDrawerLayout = mDrawerLayout;
+    }
+
+    private class ViewHolderItem extends RecyclerView.ViewHolder{
 
         TextView textView;
-
-        ViewHolder(android.view.View itemView) {
-
+        ViewHolderItem(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.list_view_tv);
         }
     }
 
-    public DrawerRecyclerViewAdapter(ArrayList<String> dataSet, DrawerLayout drawerLayout) {
-        mDataset = dataSet;
-        mDrawerLayout = drawerLayout;
+    private class ViewHolderHeader extends RecyclerView.ViewHolder{
+
+        ViewHolderHeader(View itemView) {
+            super(itemView);
+        }
+    }
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_HEADER) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_header, parent, false);
+            return new ViewHolderHeader(v);
+        } else {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_item, parent, false);
+            return new ViewHolderItem(v);
+        }
     }
 
     @Override
-    public DrawerRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_item, parent, false);
-        return new ViewHolder(v);
-    }
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof ViewHolderItem){
+            ((ViewHolderItem) holder).textView.setText(mDataset.get(position));
+        }
 
-    @Override
-    public void onBindViewHolder(final DrawerRecyclerViewAdapter.ViewHolder holder, final int position) {
-        holder.textView.setText(mDataset.get(position));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.closeDrawer(Gravity.LEFT);
-                Intent i = new Intent(holder.itemView.getContext(), WeatherData.class);
-                i.putExtra("cityname", mDataset.get(position));
-                holder.itemView.getContext().startActivity(i);
-            }
-        });
     }
 
     @Override
     public int getItemCount() {
         return mDataset.size();
     }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0){
+            return TYPE_HEADER;
+        } else {
+            return TYPE_ITEM;
+        }
+    }
+
+    //    private ArrayList<String> mDataset;
+//    private DrawerLayout mDrawerLayout;
+//    private static final int TYPE_HEADER = 0;
+//    private static final int TYPE_ITEM = 1;
+//
+//    private class ViewHolderItem extends RecyclerView.ViewHolder {
+//
+//        TextView textView;
+//
+//        ViewHolderItem(View itemView) {
+//            super(itemView);
+//            textView = (TextView) itemView.findViewById(R.id.list_view_tv);
+//        }
+//    }
+//
+//    private class ViewHolderHeader extends RecyclerView.ViewHolder{
+//
+//        ViewHolderHeader(View itemView) {
+//            super(itemView);
+//        }
+//    }
+//
+//    public DrawerRecyclerViewAdapter(ArrayList<String> dataSet, DrawerLayout drawerLayout) {
+//        mDataset = dataSet;
+//        mDrawerLayout = drawerLayout;
+//    }
+//
+//    @Override
+//    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//        View v;
+//        if (viewType == TYPE_HEADER) {
+//            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_header, parent, false);
+//            return new ViewHolderHeader(v);
+//        }else {
+//            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_item, parent, false);
+//            return new ViewHolderItem(v);
+//        }
+//    }
+//
+//    @Override
+//    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+//        if (holder instanceof ViewHolderItem) {
+//            ((ViewHolderItem) holder).textView.setText(mDataset.get(position));
+//            holder.itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+//                    Intent i = new Intent(holder.itemView.getContext(), WeatherData.class);
+//                    i.putExtra("cityname", mDataset.get(position));
+//                    holder.itemView.getContext().startActivity(i);
+//                }
+//            });
+//        }
+//    }
+//
+//    @Override
+//    public int getItemViewType(int position) {
+//        if (position == 0) {
+//            return TYPE_HEADER;
+//        } else {
+//            return TYPE_ITEM;
+//        }
+//    }
+//
+//    @Override
+//    public int getItemCount() {
+//        return mDataset.size();
+//    }
 
 }
