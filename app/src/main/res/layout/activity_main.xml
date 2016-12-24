@@ -30,11 +30,11 @@
         android:layout_height="40dp">
 
         <Button
-            android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/b_delete"
             android:layout_weight="1"
-            android:background= "@mipmap/close" />
+            android:background= "@mipmap/close"
+            android:layout_width="25dp" />
 
         <EditText
             android:layout_width="100dp"
@@ -44,14 +44,15 @@
             android:hint="Search for a city..."
             android:textColorHint="@color/colorDivider"
             android:textColor="@color/colorPrimaryText"
-            android:background="@android:color/white" />
+            android:background="@android:color/white"
+            android:singleLine="true" />
 
         <Button
             android:id="@+id/b_search"
             android:layout_weight="1"
             android:background="@mipmap/search"
-            android:layout_width="30dp"
-            android:layout_height="30dp" />
+            android:layout_height="30dp"
+            android:layout_width="25dp" />
     </LinearLayout>
 
     <TextView

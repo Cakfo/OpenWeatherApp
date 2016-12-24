@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
 
         if (newCitiesList.size() == 0) {
+            newCitiesList.add("");
             newCitiesList.add("Your List is Empty");
         }
 
@@ -110,35 +111,43 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 if (autoCompleteTextView.getText().toString().trim().length() != 0) {
-                    alertDialog = new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Save city name")
-                            .setMessage("Do you want to save this city?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    newCitiesList.add(autoCompleteTextView.getText().toString().split(",")[0]);
-                                    try {
-                                        writeToFile(newCitiesList);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
 
-                                    Intent i = new Intent(MainActivity.this, WeatherData.class);
-                                    i.putExtra("cityname", autoCompleteTextView.getText().toString());
-                                    startActivity(i);
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                        if (newCitiesList.contains(autoCompleteTextView.getText().toString().split(",") [0])){
+                            Toast.makeText(MainActivity.this, "Selected city already exists", Toast.LENGTH_SHORT).show();
+                        } else {
+                            alertDialog = new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle("Save city name")
+                                    .setMessage("Do you want to save this city?")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
 
-                                    Intent i = new Intent(MainActivity.this, WeatherData.class);
-                                    i.putExtra("cityname", autoCompleteTextView.getText().toString());
-                                    startActivity(i);
-                                }
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
+                                            newCitiesList.add(autoCompleteTextView.getText().toString().split(",")[0]);
+                                            drawerRecyclerAdapter.notifyDataSetChanged();
+                                            try {
+                                                writeToFile(newCitiesList);
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            Intent i = new Intent(MainActivity.this, WeatherData.class);
+                                            i.putExtra("cityname", autoCompleteTextView.getText().toString());
+                                            startActivity(i);
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            Intent i = new Intent(MainActivity.this, WeatherData.class);
+                                            i.putExtra("cityname", autoCompleteTextView.getText().toString());
+                                            startActivity(i);
+                                        }
+                                    })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+                        }
+
                 } else {
                     Toast.makeText(MainActivity.this, "Place can't be empty", Toast.LENGTH_SHORT).show();
                 }
